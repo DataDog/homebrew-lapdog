@@ -16,6 +16,20 @@ When reporting a formula issue, please include:
 - Output of `brew config`
 - Full output of the failing `brew install` / `brew upgrade` command (with `--verbose --debug` if possible)
 
+## Local development setup
+
+Brew commands like `brew install` and `brew test` only work on formulae that live
+inside a registered tap. To test changes against your local clone, symlink it into
+Homebrew's taps directory:
+
+```sh
+mkdir -p "$(brew --repository)/Library/Taps/datadog"
+ln -sfn "$PWD" "$(brew --repository)/Library/Taps/datadog/homebrew-lapdog"
+```
+
+After that, brew sees the local clone as the `datadog/lapdog` tap and you can
+reference the formula by name (e.g. `lapdog`) in any brew command.
+
 ## Submitting a pull request
 
 1. Fork this repo and create a branch.
@@ -23,30 +37,55 @@ When reporting a formula issue, please include:
 3. Test the formula locally:
 
    ```sh
-   brew install --build-from-source ./Formula/lapdog.rb
+   brew install --build-from-source lapdog
    brew test lapdog
    brew audit --strict --new lapdog
+   brew style Formula/lapdog.rb
    ```
 
-4. If your change updates Python dependencies, regenerate the resource blocks:
-
-   ```sh
-   brew update-python-resources Formula/lapdog.rb
-   ```
-
-5. Commit your changes with a descriptive message and open a pull request.
+4. Commit your changes with a descriptive message and open a pull request.
 
 ## Bumping the formula version
 
 1. Update the `url` to the new release tag.
-2. Compute and update the `sha256`:
+2. Update the `sha256`:
 
    ```sh
    curl -sL https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/vX.Y.Z.tar.gz | shasum -a 256
    ```
 
-3. Run `brew update-python-resources Formula/lapdog.rb` to refresh the resource blocks.
+3. Regenerate the `resource` blocks (see below) — transitive Python deps may
+   have shifted between releases.
 4. Test locally as above and open a PR.
+
+## Regenerating resource blocks
+
+The canonical Homebrew tool for this is `brew update-python-resources`, but it
+doesn't work for `dd-apm-test-agent` because the package uses `setuptools-scm`
+for versioning and the GitHub source tarball doesn't include `.git`, so
+metadata extraction fails before pip can resolve the dependency tree.
+
+Use [`homebrew-pypi-poet`](https://github.com/tdsmith/homebrew-pypi-poet) in a
+fresh venv instead:
+
+```sh
+python3.13 -m venv /tmp/lapdog-poet
+source /tmp/lapdog-poet/bin/activate
+
+# poet relies on pkg_resources, which setuptools dropped in 75+
+pip install "setuptools<75"
+pip install homebrew-pypi-poet
+pip install ddapm-test-agent==<version>
+
+poet ddapm-test-agent
+
+deactivate
+```
+
+Paste the output into `Formula/lapdog.rb`, replacing the existing `resource`
+blocks. Drop the empty `resource "ddapm-test-agent"` block that poet emits —
+that's the package itself, not a dependency, and its URL/sha256 belong on the
+formula's top-level `url` / `sha256`.
 
 ## License and contributor agreement
 
