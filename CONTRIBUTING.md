@@ -35,7 +35,6 @@ When reporting a formula issue, please include:
    ```
 
 5. Commit your changes with a descriptive message and open a pull request.
-6. CI will run `brew test-bot` against your PR. Address any failures before review.
 
 ## Bumping the formula version
 
