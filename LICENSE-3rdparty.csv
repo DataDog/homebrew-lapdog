@@ -1,0 +1,26 @@
+Component,Origin,License,Copyright
+ddapm-test-agent,PyPI,BSD-3-Clause,"Copyright 2016, Datadog, Inc."
+aiohappyeyeballs,PyPI,PSF-2.0,Copyright (c) 2024 J. Nick Koston
+aiohttp,PyPI,Apache-2.0,Copyright aio-libs contributors
+aiosignal,PyPI,Apache-2.0,Copyright 2013-2019 Nikolay Kim and Andrew Svetlov
+attrs,PyPI,MIT,Copyright (c) 2015 Hynek Schlawack and the attrs contributors
+certifi,PyPI,MPL-2.0,Copyright (c) Kenneth Reitz
+charset-normalizer,PyPI,MIT,Copyright (c) 2025 TAHRI Ahmed R.
+ddsketch,PyPI,Apache-2.0,"Copyright 2020, Datadog, Inc."
+frozenlist,PyPI,Apache-2.0,Copyright 2013-2019 Nikolay Kim and Andrew Svetlov
+grpcio,PyPI,Apache-2.0,Copyright 2014 gRPC authors.
+idna,PyPI,BSD-3-Clause,"Copyright (c) 2013-2024, Kim Davies and contributors."
+Jinja2,PyPI,BSD-3-Clause,Copyright 2007 Pallets
+MarkupSafe,PyPI,BSD-3-Clause,Copyright 2010 Pallets
+msgpack,PyPI,Apache-2.0,Copyright (C) 2008-2011 INADA Naoki <songofacandy@gmail.com>
+multidict,PyPI,Apache-2.0,Copyright 2016 Andrew Svetlov and aio-libs contributors
+opentelemetry-proto,PyPI,Apache-2.0,Copyright The OpenTelemetry Authors
+propcache,PyPI,Apache-2.0,Copyright 2016-2024 aio-libs collaboration.
+protobuf,PyPI,BSD-3-Clause,Copyright 2008 Google Inc.  All rights reserved.
+PyYAML,PyPI,MIT,Copyright (c) 2017-2021 Ingy döt Net
+requests,PyPI,Apache-2.0,Copyright 2019 Kenneth Reitz
+requests-aws4auth,PyPI,MIT,Copyright (c) 2014 Sam Washington
+six,PyPI,MIT,Copyright (c) 2010-2024 Benjamin Peterson
+typing-extensions,PyPI,PSF-2.0,Copyright (c) Python Software Foundation; All Rights Reserved
+urllib3,PyPI,MIT,Copyright (c) 2008-2020 Andrey Petrov and contributors.
+yarl,PyPI,Apache-2.0,Copyright 2016-2021 Andrew Svetlov and aio-libs contributors
