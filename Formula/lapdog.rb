@@ -9,8 +9,8 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.52.0.tar.gz"
-  sha256 "8ca45ef738eeecfb6150e7dcf03e8d977b1572db1a38cf3f762136603aa06886"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.53.0.tar.gz"
+  sha256 "c3c707082f17cf7562a2a190a0943ede62df687c3f52629a8383ee931ee7a8aa"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
@@ -112,8 +112,8 @@ class Lapdog < Formula
   end
 
   resource "requests-aws4auth" do
-    url "https://files.pythonhosted.org/packages/e5/0e/af3754c15e79a6279df256b56a805f8c7512f641839f68c2aa63dafc8f3c/requests_aws4auth-1.3.1.tar.gz"
-    sha256 "b6ad4882310e03ba2538ebf94d1f001ca9feabc5c52618539cf1eb6d5af76791"
+    url "https://files.pythonhosted.org/packages/d1/fd/796afb1c08e6332da9200bc530bcd869a17cecf93c4d9355d9af8c263eea/requests_aws4auth-1.3.2.tar.gz"
+    sha256 "7a697bf3c7a66d82980ad3348a2539403870d5c1f1e313f5676fb11e6793eef8"
   end
 
   resource "six" do
@@ -146,6 +146,6 @@ class Lapdog < Formula
   end
 
   test do
-    system libexec/"bin/python", "-c", "import ddapm_test_agent"
+    system libexec/"bin/python", "-c", "import ddapm_test_agent, lapdog"
   end
 end
