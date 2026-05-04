@@ -27,6 +27,7 @@ lapdog run      # start the local test agent
 lapdog stop     # stop it
 lapdog status   # check if it's running
 lapdog claude   # launch Claude Code with LLM span capture
+lapdog python   # launch python application with span capture
 ```
 
 See the [`dd-apm-test-agent` README](https://github.com/DataDog/dd-apm-test-agent#readme)
