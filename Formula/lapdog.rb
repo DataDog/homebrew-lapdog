@@ -14,6 +14,7 @@ class Lapdog < Formula
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
+  depends_on "libyaml"
   depends_on "python@3.13"
 
   resource "aiohappyeyeballs" do
