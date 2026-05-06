@@ -42,7 +42,7 @@ jobs:
 
       - name: Build bottle
         if: github.event_name == 'pull_request'
-        run: brew test-bot --only-formulae --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}"
+        run: brew test-bot --only-formulae --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}" lapdog
 
       - name: Upload bottle
         if: always() && github.event_name == 'pull_request'
