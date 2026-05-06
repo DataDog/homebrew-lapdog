@@ -47,8 +47,8 @@ jobs:
       - name: Stage bottle artifacts
         if: always() && github.event_name == 'pull_request'
         run: |
-          find / -maxdepth 6 -name "lapdog--*.bottle.*" 2>/dev/null -exec mv -n {} . \; || true
-          ls -la *.bottle.* 2>/dev/null || echo "no bottles in workspace"
+          find / -maxdepth 6 -name "lapdog--*.bottle.*" -exec mv -n {} . \; 2>/dev/null || true
+          ls -la -- *.bottle.* 2>/dev/null || echo "no bottles in workspace"
 
       - name: Upload bottle
         if: always() && github.event_name == 'pull_request'
