@@ -20,6 +20,7 @@ class Lapdog < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:  "79ae5578191d367d174fa81ee3aa2d6d9e4a356d6f9acfc4ad929a62232eb10e"
   end
 
+  depends_on "expat"
   depends_on "libyaml"
   depends_on "python@3.13"
 
@@ -148,6 +149,7 @@ class Lapdog < Formula
     # git tags. The GitHub source tarball doesn't include .git, so we have
     # to set the version explicitly.
     ENV["SETUPTOOLS_SCM_PRETEND_VERSION_FOR_DDAPM_TEST_AGENT"] = version.to_s
+    ENV["DYLD_LIBRARY_PATH"] = Formula["expat"].opt_lib.to_s
 
     virtualenv_install_with_resources
   end
