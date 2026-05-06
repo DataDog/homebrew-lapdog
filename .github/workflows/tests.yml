@@ -42,13 +42,7 @@ jobs:
 
       - name: Build bottle
         if: github.event_name == 'pull_request'
-        run: brew test-bot --only-formulae --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}" lapdog
-
-      - name: Stage bottle artifacts
-        if: always() && github.event_name == 'pull_request'
-        run: |
-          find / -maxdepth 6 -name "lapdog--*.bottle.*" -exec mv -n {} . \; 2>/dev/null || true
-          ls -la -- *.bottle.* 2>/dev/null || echo "no bottles in workspace"
+        run: brew test-bot --only-formulae --keep-old --skip-recursive-dependents --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}"
 
       - name: Upload bottle
         if: always() && github.event_name == 'pull_request'
