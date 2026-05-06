@@ -1,0 +1,39 @@
+name: brew pr-pull
+
+# Triggers when a PR gets labeled with `pr-pull`. Pulls bottle artifacts from
+# the PR's tests workflow run, uploads them to a GitHub Release tied to the
+# formula version, updates the formula's `bottle do` block on the PR, and
+# pushes the result to the PR branch. Maintainer then merges the PR normally.
+
+on:
+  pull_request_target:
+    types:
+      - labeled
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+jobs:
+  pr-pull:
+    if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+
+      - name: Set up git
+        uses: Homebrew/actions/git-user-config@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+
+      - name: Pull bottles
+        uses: Homebrew/actions/pr-pull@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tap: datadog/lapdog
+
+      - name: Push commits
+        uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.base.ref }}
