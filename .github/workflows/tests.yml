@@ -44,6 +44,12 @@ jobs:
         if: github.event_name == 'pull_request'
         run: brew test-bot --only-formulae --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}" lapdog
 
+      - name: Stage bottle artifacts
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          find / -maxdepth 6 -name "lapdog--*.bottle.*" 2>/dev/null -exec mv -n {} . \; || true
+          ls -la *.bottle.* 2>/dev/null || echo "no bottles in workspace"
+
       - name: Upload bottle
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
