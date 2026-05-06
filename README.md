@@ -35,29 +35,22 @@ for full documentation.
 
 ## Using `lapdog python` (optional ddtrace setup)
 
-`lapdog python my_app.py` runs your Python app with `ddtrace` instrumentation
-pointed at the local test agent. The Homebrew formula doesn't bundle `ddtrace`
-itself, so install it into lapdog's venv once:
+`lapdog python my_app.py` runs your Python app with `ddtrace` auto-instrumentation
+pointed at the local test agent. You only need this for `lapdog python` — `lapdog
+claude` and the other subcommands work without it.
+
+Install `ddtrace` into your project's Python — wherever your app runs:
 
 ```sh
-/opt/homebrew/opt/lapdog/libexec/bin/python -m pip install ddtrace
+# in your project's venv
+pip install ddtrace
 ```
-
-You don't need this for `lapdog claude`, `lapdog start`, or any of the other
-subcommands — only for `lapdog python`.
 
 ## Updating
 
 ```sh
 brew update
 brew upgrade lapdog
-```
-
-If you installed `ddtrace` for `lapdog python`, re-run the install after each
-upgrade — `brew upgrade` recreates the formula's venv from scratch:
-
-```sh
-/opt/homebrew/opt/lapdog/libexec/bin/python -m pip install ddtrace
 ```
 
 ## Reporting issues
