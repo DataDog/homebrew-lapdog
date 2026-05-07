@@ -9,17 +9,18 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.54.1.tar.gz"
-  sha256 "b2543e90dea4d10554875d861c6399c28a0eef31b33fd6a0d55b2bbfe93113c0"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.54.2.tar.gz"
+  sha256 "fab4d3617c450e88462cee4fc96518a5ddf88cc0605d078d657388ece9b07223"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-3db397ceeb33f56b86367b77d66570e629c78f80"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "994da46b83c7c9caa69c6a0dc608f2ceeb48bf145cb23804dd4dff8be65be221"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "79ae5578191d367d174fa81ee3aa2d6d9e4a356d6f9acfc4ad929a62232eb10e"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-fcefe3edf2422d555f2883d2a0b7022b308ecc1a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "092c18aa3ba5b8c38e1f9c2867058966c11a4163db94d03df1f0c235497e2d63"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4bbe0514056b0aab7f436503e4dc16228b7a07e260c18d58bf78b694def1d43a"
   end
 
+  depends_on "expat"
   depends_on "libyaml"
   depends_on "python@3.13"
 
@@ -148,6 +149,7 @@ class Lapdog < Formula
     # git tags. The GitHub source tarball doesn't include .git, so we have
     # to set the version explicitly.
     ENV["SETUPTOOLS_SCM_PRETEND_VERSION_FOR_DDAPM_TEST_AGENT"] = version.to_s
+    ENV["DYLD_LIBRARY_PATH"] = Formula["expat"].opt_lib.to_s
 
     virtualenv_install_with_resources
   end
