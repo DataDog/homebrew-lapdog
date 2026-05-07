@@ -27,10 +27,16 @@ jobs:
         uses: Homebrew/actions/git-user-config@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
       - name: Pull bottles
-        uses: Homebrew/actions/pr-pull@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tap: datadog/lapdog
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          brew pr-pull \
+            --debug \
+            --tap="${GITHUB_REPOSITORY}" \
+            --workflows="tests.yml" \
+            --artifact-pattern="bottles-*" \
+            "${PR}"
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
