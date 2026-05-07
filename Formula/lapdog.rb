@@ -9,8 +9,8 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.54.1.tar.gz"
-  sha256 "b2543e90dea4d10554875d861c6399c28a0eef31b33fd6a0d55b2bbfe93113c0"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.54.2.tar.gz"
+  sha256 "fab4d3617c450e88462cee4fc96518a5ddf88cc0605d078d657388ece9b07223"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
