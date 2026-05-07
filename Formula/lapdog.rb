@@ -14,6 +14,12 @@ class Lapdog < Formula
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-3db397ceeb33f56b86367b77d66570e629c78f80"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "994da46b83c7c9caa69c6a0dc608f2ceeb48bf145cb23804dd4dff8be65be221"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "79ae5578191d367d174fa81ee3aa2d6d9e4a356d6f9acfc4ad929a62232eb10e"
+  end
+
   depends_on "libyaml"
   depends_on "python@3.13"
 
