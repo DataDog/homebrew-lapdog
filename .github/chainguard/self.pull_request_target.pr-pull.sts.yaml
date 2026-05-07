@@ -10,5 +10,7 @@ claim_pattern:
   repository: DataDog/homebrew-lapdog
 
 permissions:
+  actions: read
+  checks: read
   contents: write
   pull_requests: write
