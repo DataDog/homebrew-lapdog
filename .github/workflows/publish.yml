@@ -12,14 +12,24 @@ on:
 
 permissions:
   actions: read
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 jobs:
   pr-pull:
     if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
     runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
     steps:
+      - name: Issue dd-octo-sts token
+        id: octo-sts
+        uses: DataDog/dd-octo-sts-action@96a25462dbcb10ebf0bfd6e2ccc917d2ab235b9a # v1.0.4
+        with:
+          audience: dd-octo-sts
+          scope: DataDog/homebrew-lapdog
+          policy: self.pull_request_target.pr-pull
+
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
@@ -28,7 +38,7 @@ jobs:
 
       - name: Pull bottles
         env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ steps.octo-sts.outputs.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           brew pr-pull \
@@ -41,5 +51,5 @@ jobs:
       - name: Push commits
         uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.octo-sts.outputs.token }}
           branch: ${{ github.event.pull_request.base.ref }}
