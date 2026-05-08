@@ -1,9 +1,9 @@
 name: brew pr-pull
 
-# Triggers when a PR gets labeled with `pr-pull`. Pulls bottle artifacts from
-# the PR's tests workflow run, uploads them to a GitHub Release tied to the
-# formula version, updates the formula's `bottle do` block on the PR, and
-# pushes the result to the PR branch. Maintainer then merges the PR normally.
+# Triggers when a PR gets labeled with `pr-pull`. Finds the tests.yml run 
+# for the PR head SHA, downloads bottle artifacts, uploads them to a per-SHA release,
+# merges the bottle hashes into the formula, and pushes the commit to the PR's head
+# branch. Maintainer then merges the PR normally.
 
 on:
   pull_request_target:
@@ -46,19 +46,61 @@ jobs:
           git fetch origin "pull/${PR}/head:${HEAD_REF}"
           git checkout "${HEAD_REF}"
 
-      - name: Pull bottles
+      - name: Find tests.yml workflow run
+        id: find-run
         env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          run_id=$(gh run list \
+            --repo "${GITHUB_REPOSITORY}" \
+            --workflow=tests.yml \
+            --commit "${PR_HEAD_SHA}" \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')
+          if [ -z "${run_id}" ]; then
+            echo "::error::No successful tests.yml run found for ${PR_HEAD_SHA}"
+            exit 1
+          fi
+          echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
+
+      - name: Download bottle artifacts
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          RUN_ID: ${{ steps.find-run.outputs.run_id }}
+        run: |
+          mkdir -p /tmp/bottle-artifacts
+          gh run download "${RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --pattern 'bottles-*' \
+            --dir /tmp/bottle-artifacts
+
+      - name: Upload bottles to release
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          brew pr-pull \
-            --debug \
-            --no-cherry-pick \
-            --branch-okay \
-            --tap="${GITHUB_REPOSITORY}" \
-            --workflows="tests.yml" \
-            --artifact-pattern="bottles-*" \
-            "${PR}"
+          tag="lapdog-${PR_HEAD_SHA}"
+          gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1 \
+            || gh release create "${tag}" \
+                --repo "${GITHUB_REPOSITORY}" \
+                --title "${tag}" \
+                --notes "Bottles for PR #${PR}"
+          find /tmp/bottle-artifacts -name '*.bottle.tar.gz' -exec \
+            gh release upload "${tag}" --repo "${GITHUB_REPOSITORY}" --clobber {} +
+
+      - name: Merge bottle hashes into formula
+        run: |
+          tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
+          cd "${tap_dir}"
+          json_files=$(find /tmp/bottle-artifacts -name '*.bottle.json' | tr '\n' ' ')
+          # shellcheck disable=SC2086
+          brew bottle --merge --write --no-commit ${json_files}
+          git add Formula/lapdog.rb
+          git commit -m "lapdog: update bottle do block"
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
