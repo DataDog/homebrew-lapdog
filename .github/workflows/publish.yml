@@ -97,18 +97,24 @@ jobs:
           find /tmp/bottles-upload -name '*.bottle*.tar.gz' -exec \
             gh release upload "${tag}" --repo "${GITHUB_REPOSITORY}" --clobber {} +
 
-      - name: Merge bottle hashes into formula
+      - name: Update formula via Contents API
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
           cd "${tap_dir}"
           json_files=$(find /tmp/bottle-artifacts -name '*.bottle.json' | tr '\n' ' ')
           # shellcheck disable=SC2086
           brew bottle --merge --write --no-commit ${json_files}
-          git add Formula/lapdog.rb
-          git commit -m "lapdog: update bottle do block"
-
-      - name: Push commits
-        uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
-        with:
-          token: ${{ steps.octo-sts.outputs.token }}
-          branch: ${{ github.event.pull_request.head.ref }}
+          if git diff --quiet Formula/lapdog.rb; then
+            echo "Formula already has these bottle hashes; skipping commit."
+            exit 0
+          fi
+          # Commits made via the Contents API by a GitHub App are signed by GitHub on its behalf.
+          file_sha=$(gh api "/repos/${GITHUB_REPOSITORY}/contents/Formula/lapdog.rb?ref=${HEAD_REF}" --jq '.sha')
+          gh api --method PUT "/repos/${GITHUB_REPOSITORY}/contents/Formula/lapdog.rb" \
+            -f message="lapdog: update bottle do block" \
+            -f content="$(base64 -w0 < Formula/lapdog.rb)" \
+            -f sha="${file_sha}" \
+            -f branch="${HEAD_REF}"
