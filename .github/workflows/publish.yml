@@ -36,6 +36,16 @@ jobs:
       - name: Set up git
         uses: Homebrew/actions/git-user-config@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
+      - name: Check out PR branch in tap
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
+          cd "${tap_dir}"
+          git fetch origin "pull/${PR}/head:${HEAD_REF}"
+          git checkout "${HEAD_REF}"
+
       - name: Pull bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ steps.octo-sts.outputs.token }}
@@ -43,6 +53,8 @@ jobs:
         run: |
           brew pr-pull \
             --debug \
+            --no-cherry-pick \
+            --branch-okay \
             --tap="${GITHUB_REPOSITORY}" \
             --workflows="tests.yml" \
             --artifact-pattern="bottles-*" \
@@ -52,4 +64,4 @@ jobs:
         uses: Homebrew/actions/git-try-push@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
         with:
           token: ${{ steps.octo-sts.outputs.token }}
-          branch: ${{ github.event.pull_request.base.ref }}
+          branch: ${{ github.event.pull_request.head.ref }}
