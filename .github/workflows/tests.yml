@@ -13,7 +13,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-author:
+    runs-on: ubuntu-22.04
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "skip=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          author=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${{ github.event.pull_request.head.sha }}" --jq '.author.login // ""')
+          if [ "${author}" = "dd-octo-sts[bot]" ]; then
+            echo "Head commit is from dd-octo-sts[bot]; skipping rebottle."
+            echo "skip=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "skip=false" >> "${GITHUB_OUTPUT}"
+          fi
+
   test-bot:
+    needs: check-author
+    if: needs.check-author.outputs.skip != 'true'
     name: brew test-bot (${{ matrix.os }})
     strategy:
       fail-fast: false
