@@ -30,8 +30,9 @@ lapdog claude   # launch Claude Code with LLM span capture
 lapdog python   # launch python application with span capture
 ```
 
-See the [`dd-apm-test-agent` README](https://github.com/DataDog/dd-apm-test-agent#readme)
-for full documentation.
+See the [Lapdog install & usage guide](https://github.com/DataDog/dd-apm-test-agent/blob/master/lapdog/README.md)
+for full documentation — pip/Docker install paths, every command, and how to
+uninstall (`lapdog uninstall`).
 
 ## Using `lapdog python` (optional ddtrace setup)
 
