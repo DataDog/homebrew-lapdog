@@ -154,6 +154,31 @@ class Lapdog < Formula
     virtualenv_install_with_resources
   end
 
+  def caveats
+    <<~EOS
+      Lapdog stores runtime state outside the Homebrew prefix:
+
+        ~/.lapdog/                          (PID + log)
+        ~/.claude/settings.json             (Claude Code hook entries)
+        ~/.pi/agent/extensions/lapdog.ts    (if `lapdog pi` was run)
+
+      Homebrew cannot remove these on `brew uninstall`. To fully tear
+      down lapdog, run *before* uninstalling:
+
+        lapdog uninstall
+
+      That stops the background agent, removes ~/.lapdog, strips
+      lapdog's Claude Code hooks (other hooks are left alone), and
+      deletes the pi extension. Then:
+
+        brew uninstall lapdog
+        brew untap datadog/lapdog
+
+      See https://github.com/DataDog/dd-apm-test-agent/blob/master/lapdog/README.md
+      for the full install and uninstall guide.
+    EOS
+  end
+
   test do
     system libexec/"bin/python", "-c", "import ddapm_test_agent, lapdog"
   end
