@@ -154,6 +154,40 @@ class Lapdog < Formula
     virtualenv_install_with_resources
   end
 
+  def post_install
+    # Auto-install the lapdog Claude Code plugin when `claude` is on PATH.
+    # Skipped when LAPDOG_SKIP_PLUGIN_AUTOINSTALL is set. Spawn the user's
+    # shell so a `claude` binary installed outside Homebrew's sanitized
+    # PATH (e.g. ~/.claude/local/bin/claude) is still discoverable.
+    return if ENV["LAPDOG_SKIP_PLUGIN_AUTOINSTALL"]
+
+    shell = ENV["SHELL"] || "/bin/sh"
+    script = <<~SH
+      if command -v claude >/dev/null 2>&1; then
+        claude plugin marketplace add DataDog/dd-apm-test-agent >/dev/null 2>&1 || true
+        claude plugin install lapdog@lapdog >/dev/null 2>&1 || true
+        echo "[lapdog] Configured Claude Code plugin: lapdog@lapdog"
+      fi
+    SH
+    system shell, "-lc", script
+  end
+
+  def caveats
+    <<~EOS
+      To capture Claude Code sessions in lapdog, install the bundled Claude
+      Code plugin from the in-repo marketplace:
+
+        claude plugin marketplace add DataDog/dd-apm-test-agent
+        claude plugin install lapdog@lapdog
+
+      If `claude` was on PATH during `brew install`, these were attempted
+      automatically; re-run them manually if anything went wrong.
+
+      Set LAPDOG_SKIP_PLUGIN_AUTOINSTALL=1 in your environment before
+      `brew install` to disable the auto-install behavior.
+    EOS
+  end
+
   test do
     system libexec/"bin/python", "-c", "import ddapm_test_agent, lapdog"
   end
