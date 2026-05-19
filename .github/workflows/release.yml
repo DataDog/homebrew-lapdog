@@ -58,11 +58,6 @@ jobs:
             echo "::error::Couldn't parse bottle do root_url from main's formula"
             exit 1
           fi
-          if gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            echo "Release ${tag} already exists; skipping."
-            echo "should_run=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
           tag_sha=${tag#lapdog-}
           tests_run_id=$(gh run list \
             --repo "${GITHUB_REPOSITORY}" \
@@ -115,10 +110,13 @@ jobs:
           TAG: ${{ needs.check.outputs.tag }}
           PR: ${{ needs.check.outputs.pr_number }}
         run: |
-          gh release create "${TAG}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --title "${TAG}" \
-            --notes "Bottles for PR #${PR}"
+          # Create the release only if it doesn't exist; uploads are clobber-safe.
+          if ! gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release create "${TAG}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --title "${TAG}" \
+              --notes "Bottles for PR #${PR}"
+          fi
           # Rename brew test-bot's `lapdog--<ver>` to Homebrew's `lapdog-<ver>` URL form.
           mkdir -p /tmp/bottles-upload
           find /tmp/bottle-artifacts -name '*.bottle*.tar.gz' | while read -r f; do

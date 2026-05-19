@@ -90,18 +90,39 @@ formula's top-level `url` / `sha256`.
 ## Publishing bottles
 
 Formula PRs ship as precompiled bottles so users don't pay a 5–10 minute
-compilation cost on install. Publishing is fully automated:
+compilation cost on install. Publishing is fully automated across two
+workflows:
 
-1. Open a PR that changes `Formula/lapdog.rb`. `tests.yml` builds bottles for
-   macOS arm64 and Linux x86_64.
-2. When `tests.yml` succeeds, `publish.yml` automatically creates a per-SHA
-   GitHub Release, uploads the bottle artifacts, updates the formula's
-   `bottle do` block, and commits the update to the PR's branch (signed by
-   `dd-octo-sts[bot]` via the Contents API).
-3. Merge the PR normally.
+1. **On PR** — `tests.yml` builds bottles for macOS arm64 and Linux x86_64
+   and uploads them as workflow artifacts. When it succeeds, `publish.yml`
+   updates the formula's `bottle do` block to reference the future release
+   URL and commits the change to the PR branch (signed by `dd-octo-sts[bot]`
+   via the Contents API). The release itself is not yet created.
+2. **On merge** — `release.yml` parses main's formula to extract the release
+   tag, downloads the bottle artifacts from the PR's `tests.yml` run, creates
+   the GitHub Release, and uploads the bottles.
 
-No label or manual step is required — formula PRs trigger bottle publishing
-on their own. Non-formula PRs (docs, workflows, etc.) skip publishing.
+No label or manual step is required. Non-formula PRs (docs, workflows, etc.)
+skip publishing.
+
+### Recovery if `release.yml` fails after merge
+
+If `release.yml` fails (network blip, expired artifacts, etc.), main is left
+with a formula referencing a release that doesn't exist or is missing assets.
+Users running `brew install` during this window fall back to source compile
+— slow but not broken.
+
+To recover, re-run `release.yml` manually with the SHA from main's `bottle do`
+`root_url`:
+
+```sh
+gh workflow run release.yml \
+  --repo DataDog/homebrew-lapdog \
+  -f sha=<sha-from-formula-bottle-do-root_url>
+```
+
+The workflow is idempotent — safe to re-run whether or not the release
+already exists.
 
 ## License and contributor agreement
 
