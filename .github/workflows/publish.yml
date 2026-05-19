@@ -1,23 +1,64 @@
 name: brew pr-pull
 
-# Triggers when a PR gets labeled with `pr-pull`. Finds the tests.yml run 
-# for the PR head SHA, downloads bottle artifacts, uploads them to a per-SHA release,
-# merges the bottle hashes into the formula, and pushes the commit to the PR's head
-# branch. Maintainer then merges the PR normally.
+# Triggers when brew test-bot (tests.yml) completes on a PR. If the PR touches
+# Formula/ and bottle artifacts were produced, uploads them to a per-SHA
+# release, merges the bottle hashes into the formula, and commits via the
+# Contents API (auto-signed by dd-octo-sts[bot]). No manual label required.
 
 on:
-  pull_request_target:
-    types:
-      - labeled
+  workflow_run:
+    workflows: ["brew test-bot"]
+    types: [completed]
 
 permissions:
-  actions: read
   contents: read
-  pull-requests: read
 
 jobs:
+  check:
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-22.04
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+      pr_number: ${{ steps.check.outputs.pr_number }}
+      head_ref: ${{ steps.check.outputs.head_ref }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          pr_number=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/pulls" \
+            --jq '[.[] | select(.state == "open")][0].number // ""')
+          if [ -z "${pr_number}" ]; then
+            echo "No open PR found for ${HEAD_SHA}; nothing to do."
+            echo "should_run=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          formula_changed=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}/files" \
+            --jq '[.[] | select(.filename | startswith("Formula/"))] | length')
+          if [ "${formula_changed}" -eq 0 ]; then
+            echo "PR #${pr_number} does not touch Formula/; nothing to publish."
+            echo "should_run=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          artifact_count=$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID}/artifacts" \
+            --jq '[.artifacts[] | select(.name | startswith("bottles-"))] | length')
+          if [ "${artifact_count}" -eq 0 ]; then
+            echo "tests.yml run ${RUN_ID} produced no bottle artifacts; nothing to publish."
+            echo "should_run=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          head_ref=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}" --jq '.head.ref')
+          echo "should_run=true" >> "${GITHUB_OUTPUT}"
+          echo "pr_number=${pr_number}" >> "${GITHUB_OUTPUT}"
+          echo "head_ref=${head_ref}" >> "${GITHUB_OUTPUT}"
+
   pr-pull:
-    if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
     runs-on: ubuntu-22.04
     permissions:
       id-token: write
@@ -28,7 +69,7 @@ jobs:
         with:
           audience: dd-octo-sts
           scope: DataDog/homebrew-lapdog
-          policy: self.pull_request_target.pr-pull
+          policy: self.workflow_run.pr-pull
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
@@ -38,38 +79,18 @@ jobs:
 
       - name: Check out PR branch in tap
         env:
-          PR: ${{ github.event.pull_request.number }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR: ${{ needs.check.outputs.pr_number }}
+          HEAD_REF: ${{ needs.check.outputs.head_ref }}
         run: |
           tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
           cd "${tap_dir}"
           git fetch origin "pull/${PR}/head:${HEAD_REF}"
           git checkout "${HEAD_REF}"
 
-      - name: Find tests.yml workflow run
-        id: find-run
-        env:
-          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          run_id=$(gh run list \
-            --repo "${GITHUB_REPOSITORY}" \
-            --workflow=tests.yml \
-            --commit "${PR_HEAD_SHA}" \
-            --status success \
-            --limit 1 \
-            --json databaseId \
-            --jq '.[0].databaseId')
-          if [ -z "${run_id}" ]; then
-            echo "::error::No successful tests.yml run found for ${PR_HEAD_SHA}"
-            exit 1
-          fi
-          echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
-
       - name: Download bottle artifacts
         env:
           GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
-          RUN_ID: ${{ steps.find-run.outputs.run_id }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           mkdir -p /tmp/bottle-artifacts
           gh run download "${RUN_ID}" \
@@ -80,8 +101,8 @@ jobs:
       - name: Upload bottles to release
         env:
           GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PR: ${{ needs.check.outputs.pr_number }}
         run: |
           tag="lapdog-${PR_HEAD_SHA}"
           gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1 \
@@ -100,7 +121,7 @@ jobs:
       - name: Update formula via Contents API
         env:
           GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REF: ${{ needs.check.outputs.head_ref }}
         run: |
           tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
           cd "${tap_dir}"

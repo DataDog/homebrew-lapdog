@@ -87,25 +87,21 @@ blocks. Drop the empty `resource "ddapm-test-agent"` block that poet emits —
 that's the package itself, not a dependency, and its URL/sha256 belong on the
 formula's top-level `url` / `sha256`.
 
-## Publishing bottles (maintainer flow)
+## Publishing bottles
 
 Formula PRs ship as precompiled bottles so users don't pay a 5–10 minute
-compilation cost on install. Publishing is automated but requires a manual
-label to trigger:
+compilation cost on install. Publishing is fully automated:
 
-1. Open the PR. `tests.yml` builds bottles for macOS arm64 and Linux x86_64
-   and uploads them as workflow artifacts.
-2. Once `tests.yml` is green, **add the `pr-pull` label**. This triggers
-   `publish.yml`, which creates a per-SHA GitHub Release, uploads the bottle
-   artifacts, updates the formula's `bottle do` block, and pushes the bottle
-   commit to the PR's branch.
+1. Open a PR that changes `Formula/lapdog.rb`. `tests.yml` builds bottles for
+   macOS arm64 and Linux x86_64.
+2. When `tests.yml` succeeds, `publish.yml` automatically creates a per-SHA
+   GitHub Release, uploads the bottle artifacts, updates the formula's
+   `bottle do` block, and commits the update to the PR's branch (signed by
+   `dd-octo-sts[bot]` via the Contents API).
 3. Merge the PR normally.
 
-**If you forget the `pr-pull` label** before merging, the formula lands on
-`main` with a stale `bottle do` block. Users running `brew install` will hit
-a 404 fetching the bottle and fall back to source compilation (slow, but not
-broken). To recover, open a follow-up PR, let CI build fresh bottles, add the
-`pr-pull` label, and merge.
+No label or manual step is required — formula PRs trigger bottle publishing
+on their own. Non-formula PRs (docs, workflows, etc.) skip publishing.
 
 ## License and contributor agreement
 
