@@ -9,15 +9,15 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.54.2.tar.gz"
-  sha256 "fab4d3617c450e88462cee4fc96518a5ddf88cc0605d078d657388ece9b07223"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.55.0.tar.gz"
+  sha256 "3f58bb8fcc715bac797a7581b458ceb4c30201f597d10f2e6710b46cb93bc231"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-fcefe3edf2422d555f2883d2a0b7022b308ecc1a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "092c18aa3ba5b8c38e1f9c2867058966c11a4163db94d03df1f0c235497e2d63"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4bbe0514056b0aab7f436503e4dc16228b7a07e260c18d58bf78b694def1d43a"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-f5a467b789e081e9aac26afc74e7be599df26ed1"
+    sha256 cellar: :any,                 arm64_sonoma: "036c0a8c57520631fc69ce3660c6891d03af0521520c2a3f7c884d50bf7552c7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "0112bc7d8c01b213aadd4a9a555555bbf0f0d91fed1f7fae1bceb7a67724a5d1"
   end
 
   depends_on "expat"
@@ -70,8 +70,8 @@ class Lapdog < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/ce/cc/762dfb036166873f0059f3b7de4565e1b5bc3d6f28a414c13da27e442f99/idna-3.13.tar.gz"
-    sha256 "585ea8fe5d69b9181ec1afba340451fba6ba764af97026f92a91d4eef164a242"
+    url "https://files.pythonhosted.org/packages/82/77/7b3966d0b9d1d31a36ddf1746926a11dface89a83409bf1483f0237aa758/idna-3.15.tar.gz"
+    sha256 "ca962446ea538f7092a95e057da437618e886f4d349216d2b1e294abfdb65fdc"
   end
 
   resource "Jinja2" do
@@ -100,8 +100,8 @@ class Lapdog < Formula
   end
 
   resource "propcache" do
-    url "https://files.pythonhosted.org/packages/9e/da/e9fc233cf63743258bff22b3dfa7ea5baef7b5bc324af47a0ad89b8ffc6f/propcache-0.4.1.tar.gz"
-    sha256 "f48107a8c637e80362555f37ecf49abe20370e557cc4ab374f04ec4423c97c3d"
+    url "https://files.pythonhosted.org/packages/ec/44/c87281c333769159c50594f22610f77398a47ccbfbbf23074e744e86f87c/propcache-0.5.2.tar.gz"
+    sha256 "01c4fc7480cd0598bb4b57022df55b9ca296da7fc5a8760bd8451a7e63a7d427"
   end
 
   resource "protobuf" do
@@ -115,8 +115,8 @@ class Lapdog < Formula
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/5f/a4/98b9c7c6428a668bf7e42ebb7c79d576a1c3c1e3ae2d47e674b468388871/requests-2.33.1.tar.gz"
-    sha256 "18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517"
+    url "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz"
+    sha256 "f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed"
   end
 
   resource "requests-aws4auth" do
@@ -135,8 +135,8 @@ class Lapdog < Formula
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/c7/24/5f1b3bdffd70275f6661c76461e25f024d5a38a46f04aaca912426a2b1d3/urllib3-2.6.3.tar.gz"
-    sha256 "1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed"
+    url "https://files.pythonhosted.org/packages/53/0c/06f8b233b8fd13b9e5ee11424ef85419ba0d8ba0b3138bf360be2ff56953/urllib3-2.7.0.tar.gz"
+    sha256 "231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c"
   end
 
   resource "yarl" do
