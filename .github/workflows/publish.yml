@@ -1,9 +1,10 @@
 name: brew pr-pull
 
 # Triggers when brew test-bot (tests.yml) completes on a PR. If the PR touches
-# Formula/ and bottle artifacts were produced, uploads them to a per-SHA
-# release, merges the bottle hashes into the formula, and commits via the
-# Contents API (auto-signed by dd-octo-sts[bot]). No manual label required.
+# Formula/ and bottle artifacts were produced, updates the formula's bottle do
+# block to reference the future release URL and commits via the Contents API
+# (auto-signed by dd-octo-sts[bot]). The actual release is created on merge
+# by release.yml, which uploads the bottle files. No manual label required.
 
 on:
   workflow_run:
@@ -99,26 +100,6 @@ jobs:
             --repo "${GITHUB_REPOSITORY}" \
             --pattern 'bottles-*' \
             --dir /tmp/bottle-artifacts
-
-      - name: Upload bottles to release
-        env:
-          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
-          PR_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          PR: ${{ needs.check.outputs.pr_number }}
-        run: |
-          tag="lapdog-${PR_HEAD_SHA}"
-          gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1 \
-            || gh release create "${tag}" \
-                --repo "${GITHUB_REPOSITORY}" \
-                --title "${tag}" \
-                --notes "Bottles for PR #${PR}"
-          # Rename brew test-bot's `lapdog--<ver>` to Homebrew's `lapdog-<ver>` URL form.
-          mkdir -p /tmp/bottles-upload
-          find /tmp/bottle-artifacts -name '*.bottle*.tar.gz' | while read -r f; do
-            cp "$f" "/tmp/bottles-upload/$(basename "$f" | sed 's/--/-/')"
-          done
-          find /tmp/bottles-upload -name '*.bottle*.tar.gz' -exec \
-            gh release upload "${tag}" --repo "${GITHUB_REPOSITORY}" --clobber {} +
 
       - name: Update formula via Contents API
         env:
