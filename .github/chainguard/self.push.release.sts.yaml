@@ -1,0 +1,14 @@
+# Policy for: .github/workflows/release.yml in DataDog/homebrew-lapdog
+issuer: https://token.actions.githubusercontent.com
+
+subject: repo:DataDog/homebrew-lapdog:ref:refs/heads/main
+
+claim_pattern:
+  event_name: push
+  job_workflow_ref: DataDog/homebrew-lapdog/\.github/workflows/release\.yml@refs/heads/main
+  ref: refs/heads/main
+  repository: DataDog/homebrew-lapdog
+
+permissions:
+  actions: read
+  contents: write
