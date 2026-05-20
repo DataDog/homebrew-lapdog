@@ -87,25 +87,42 @@ blocks. Drop the empty `resource "ddapm-test-agent"` block that poet emits —
 that's the package itself, not a dependency, and its URL/sha256 belong on the
 formula's top-level `url` / `sha256`.
 
-## Publishing bottles (maintainer flow)
+## Publishing bottles
 
 Formula PRs ship as precompiled bottles so users don't pay a 5–10 minute
-compilation cost on install. Publishing is automated but requires a manual
-label to trigger:
+compilation cost on install. Publishing is fully automated across two
+workflows:
 
-1. Open the PR. `tests.yml` builds bottles for macOS arm64 and Linux x86_64
-   and uploads them as workflow artifacts.
-2. Once `tests.yml` is green, **add the `pr-pull` label**. This triggers
-   `publish.yml`, which creates a per-SHA GitHub Release, uploads the bottle
-   artifacts, updates the formula's `bottle do` block, and pushes the bottle
-   commit to the PR's branch.
-3. Merge the PR normally.
+1. **On PR** — `tests.yml` builds bottles for macOS arm64 and Linux x86_64
+   and uploads them as workflow artifacts. When it succeeds, `publish.yml`
+   updates the formula's `bottle do` block to reference the future release
+   URL and commits the change to the PR branch (signed by `dd-octo-sts[bot]`
+   via the Contents API). The release itself is not yet created.
+2. **On merge** — `release.yml` parses main's formula to extract the release
+   tag, downloads the bottle artifacts from the PR's `tests.yml` run, creates
+   the GitHub Release, and uploads the bottles.
 
-**If you forget the `pr-pull` label** before merging, the formula lands on
-`main` with a stale `bottle do` block. Users running `brew install` will hit
-a 404 fetching the bottle and fall back to source compilation (slow, but not
-broken). To recover, open a follow-up PR, let CI build fresh bottles, add the
-`pr-pull` label, and merge.
+No label or manual step is required. Non-formula PRs (docs, workflows, etc.)
+skip publishing.
+
+### Recovery if `release.yml` fails after merge
+
+If `release.yml` fails (network blip, expired artifacts, etc.), main is left
+with a formula referencing a release that doesn't exist or is missing assets.
+Users running `brew install` during this window fall back to source compile
+— slow but not broken.
+
+To recover, re-run `release.yml` manually with the SHA from main's `bottle do`
+`root_url`:
+
+```sh
+gh workflow run release.yml \
+  --repo DataDog/homebrew-lapdog \
+  -f sha=<sha-from-formula-bottle-do-root_url>
+```
+
+The workflow is idempotent — safe to re-run whether or not the release
+already exists.
 
 ## License and contributor agreement
 
