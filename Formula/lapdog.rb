@@ -7,7 +7,7 @@
 class Lapdog < Formula
   include Language::Python::Virtualenv
 
-  desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
+  desc "Local LLM Observability dev tool that wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
   url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.55.0.tar.gz"
   sha256 "3f58bb8fcc715bac797a7581b458ceb4c30201f597d10f2e6710b46cb93bc231"
