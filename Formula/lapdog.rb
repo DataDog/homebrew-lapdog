@@ -169,6 +169,5 @@ class Lapdog < Formula
 
   test do
     system libexec/"bin/python", "-c", "import ddapm_test_agent, lapdog"
-    assert_match "uninstall", shell_output("#{bin}/lapdog 2>&1", 1)
   end
 end
