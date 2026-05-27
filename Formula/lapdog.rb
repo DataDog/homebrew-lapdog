@@ -9,10 +9,10 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.55.0.tar.gz"
-  sha256 "3f58bb8fcc715bac797a7581b458ceb4c30201f597d10f2e6710b46cb93bc231"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.57.0.tar.gz"
+  sha256 "8be6e0e9f102824325ea908a00076a85d7d02690908f10033544d416d0a07c87"
   license "BSD-3-Clause"
-  head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "main"
+  head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
     root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-f5a467b789e081e9aac26afc74e7be599df26ed1"
@@ -152,6 +152,19 @@ class Lapdog < Formula
     ENV["DYLD_LIBRARY_PATH"] = Formula["expat"].opt_lib.to_s
 
     virtualenv_install_with_resources
+  end
+
+  def caveats
+    <<~EOS
+      To fully remove lapdog's local runtime state, run this before uninstalling:
+
+        lapdog uninstall
+
+      This stops the background agent, removes ~/.lapdog, uninstalls the
+      Claude Code plugin and Pi extension if present, and stops Codex watchers
+      when possible. Homebrew's uninstall only removes files installed under
+      the brew prefix.
+    EOS
   end
 
   test do

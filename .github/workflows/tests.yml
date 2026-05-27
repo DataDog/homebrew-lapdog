@@ -55,6 +55,10 @@ jobs:
           key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
           restore-keys: ${{ matrix.os }}-rubygems-
 
+      - name: Install Linux sandbox dependency
+        if: matrix.os == 'ubuntu-22.04'
+        run: sudo apt-get update && sudo apt-get install --yes bubblewrap
+
       - run: brew style --display-cop-names .
 
       - run: brew test-bot --only-cleanup-before
