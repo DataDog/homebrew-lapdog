@@ -23,15 +23,18 @@ to make it easy to view LLM Observability traces locally — no Datadog backend
 required.
 
 ```sh
-lapdog run      # start the local test agent
-lapdog stop     # stop it
-lapdog status   # check if it's running
-lapdog claude   # launch Claude Code with LLM span capture
-lapdog python   # launch python application with span capture
+lapdog start      # start the local test agent
+lapdog stop       # stop it
+lapdog status     # check if it's running
+lapdog claude     # launch Claude Code with LLM span capture
+lapdog pi         # launch Pi with LLM span capture
+lapdog codex      # launch Codex with LLM span capture
+lapdog python     # launch a Python application with span capture
+lapdog uninstall  # remove local lapdog state before uninstalling the package
 ```
 
-See the [`dd-apm-test-agent` README](https://github.com/DataDog/dd-apm-test-agent#readme)
-for full documentation.
+See the [Lapdog install & usage guide](https://github.com/DataDog/dd-apm-test-agent/blob/master/lapdog/README.md)
+for full documentation, including pip/Docker install paths and the full uninstall flow.
 
 ## Using `lapdog python` (optional ddtrace setup)
 
@@ -52,6 +55,21 @@ pip install ddtrace
 brew update
 brew upgrade lapdog
 ```
+
+## Uninstalling
+
+Run Lapdog's cleanup command before removing the Homebrew package:
+
+```sh
+lapdog uninstall
+brew uninstall lapdog
+brew untap datadog/lapdog
+```
+
+`lapdog uninstall` stops the background agent, removes `~/.lapdog`, uninstalls
+managed Claude Code/Pi integrations, and stops Codex watchers when possible.
+If `lapdog codex` is still running during uninstall and anything remains under
+`~/.lapdog`, remove it manually with `rm -rf ~/.lapdog`.
 
 ## Reporting issues
 
