@@ -36,19 +36,29 @@ jobs:
 
   test-bot:
     needs: check-author
-    if: needs.check-author.outputs.skip != 'true'
     name: brew test-bot (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         os: [macos-14, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
+    # Step-level skip (not job-level) so the matrix still expands and reports
+    # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
+    # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
+    # exact names; a job-level skip collapses them into a single unexpanded
+    # check named `brew test-bot (${{ matrix.os }})`.
     steps:
+      - name: Skip rebottle
+        if: needs.check-author.outputs.skip == 'true'
+        run: echo "Head is dd-octo-sts[bot] commit; skipping rebottle."
+
       - name: Set up Homebrew
+        if: needs.check-author.outputs.skip != 'true'
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
       - name: Cache Homebrew Bundler RubyGems
+        if: needs.check-author.outputs.skip != 'true'
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
@@ -56,26 +66,107 @@ jobs:
           restore-keys: ${{ matrix.os }}-rubygems-
 
       - name: Install Linux sandbox dependency
-        if: matrix.os == 'ubuntu-22.04'
+        if: needs.check-author.outputs.skip != 'true' && matrix.os == 'ubuntu-22.04'
         run: sudo apt-get update && sudo apt-get install --yes bubblewrap
 
-      - run: brew style --display-cop-names .
+      - if: needs.check-author.outputs.skip != 'true'
+        run: brew style --display-cop-names .
 
-      - run: brew test-bot --only-cleanup-before
+      - if: needs.check-author.outputs.skip != 'true'
+        run: brew test-bot --only-cleanup-before
 
-      - run: brew test-bot --only-setup
+      - if: needs.check-author.outputs.skip != 'true'
+        run: brew test-bot --only-setup
 
-      - run: brew test-bot --only-tap-syntax
+      - if: needs.check-author.outputs.skip != 'true'
+        run: brew test-bot --only-tap-syntax
 
       - name: Build bottle
-        if: github.event_name == 'pull_request'
+        if: needs.check-author.outputs.skip != 'true' && github.event_name == 'pull_request'
         run: brew test-bot --only-formulae --skip-recursive-dependents --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}"
 
       - name: Upload bottle
-        if: always() && github.event_name == 'pull_request'
+        if: always() && needs.check-author.outputs.skip != 'true' && github.event_name == 'pull_request'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bottles-${{ matrix.os }}
           path: |
             *.bottle.*
             *.json
+
+  publish-bottle:
+    # Updates the formula's `bottle do` block on the PR head branch using the
+    # bottle artifacts produced by the test-bot matrix above. Runs inline
+    # (rather than via a separate workflow_run-triggered workflow) so the
+    # commit lands as part of the same workflow whose checks gate merging.
+    needs: [check-author, test-bot]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Skip rebottle
+        if: needs.check-author.outputs.skip == 'true'
+        run: echo "Head is dd-octo-sts[bot] commit; nothing to publish."
+
+      - name: Skip fork PR
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name != github.repository
+        run: echo "PR is from a fork; skipping auto-bottle (token cannot write to fork)."
+
+      - name: Issue dd-octo-sts token
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        id: octo-sts
+        uses: DataDog/dd-octo-sts-action@96a25462dbcb10ebf0bfd6e2ccc917d2ab235b9a # v1.0.4
+        with:
+          audience: dd-octo-sts
+          scope: DataDog/homebrew-lapdog
+          policy: self.pull_request.publish-bottle
+
+      - name: Set up Homebrew
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+
+      - name: Set up git
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: Homebrew/actions/git-user-config@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
+
+      - name: Check out PR branch in tap
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
+          cd "${tap_dir}"
+          git fetch origin "pull/${PR}/head:${HEAD_REF}"
+          git checkout "${HEAD_REF}"
+
+      - name: Download bottle artifacts
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.1.8
+        with:
+          pattern: bottles-*
+          path: /tmp/bottle-artifacts
+
+      - name: Update formula via Contents API
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
+          cd "${tap_dir}"
+          json_files=$(find /tmp/bottle-artifacts -name '*.bottle.json' | tr '\n' ' ')
+          # shellcheck disable=SC2086
+          brew bottle --merge --write --no-commit ${json_files}
+          if git diff --quiet Formula/lapdog.rb; then
+            echo "Formula already has these bottle hashes; skipping commit."
+            exit 0
+          fi
+          # Commits made via the Contents API by a GitHub App are signed by GitHub on its behalf.
+          file_sha=$(gh api "/repos/${GITHUB_REPOSITORY}/contents/Formula/lapdog.rb?ref=${HEAD_REF}" --jq '.sha')
+          gh api --method PUT "/repos/${GITHUB_REPOSITORY}/contents/Formula/lapdog.rb" \
+            -f message="lapdog: update bottle do block" \
+            -f content="$(base64 -w0 < Formula/lapdog.rb)" \
+            -f sha="${file_sha}" \
+            -f branch="${HEAD_REF}"
