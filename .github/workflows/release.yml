@@ -9,12 +9,6 @@ name: publish bottle release
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      sha:
-        description: "SHA referenced by the formula's bottle do root_url (recovery use)"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -33,25 +27,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            sha="${{ inputs.sha }}"
-          else
-            sha="${{ github.sha }}"
-          fi
-          pr_number=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${sha}/pulls" \
-            --jq '[.[] | select(.merged_at != null)][0].number // ""')
-          if [ -z "${pr_number}" ]; then
-            echo "No merged PR associated with ${sha}; skipping."
-            echo "should_run=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          formula_changed=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}/files" \
-            --jq '[.[] | select(.filename | startswith("Formula/"))] | length')
+          sha="${{ github.sha }}"
+          # Inspect the commit's files directly rather than looking up the
+          # associated PR. The /commits/{sha}/pulls reverse index can return
+          # empty for seconds after a true merge commit lands, which caused
+          # release.yml to no-op for PR #27.
+          commit=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${sha}")
+          formula_changed=$(echo "${commit}" \
+            | jq '[.files[] | select(.filename | startswith("Formula/"))] | length')
           if [ "${formula_changed}" -eq 0 ]; then
-            echo "PR #${pr_number} didn't touch Formula/; nothing to release."
+            echo "Commit ${sha} didn't touch Formula/; nothing to release."
             echo "should_run=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
+          # Best-effort PR number for release notes; falls back to the tag if absent.
+          pr_number=$(echo "${commit}" | jq -r '.commit.message' | grep -oE '#[0-9]+' | head -1 | tr -d '#')
           formula_content=$(gh api "/repos/${GITHUB_REPOSITORY}/contents/Formula/lapdog.rb?ref=main" --jq .content | base64 -d)
           tag=$(echo "${formula_content}" | grep -oE 'releases/download/lapdog-[a-f0-9]+' | head -1 | sed 's|releases/download/||')
           if [ -z "${tag}" ]; then
@@ -112,10 +102,15 @@ jobs:
         run: |
           # Create the release only if it doesn't exist; uploads are clobber-safe.
           if ! gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            if [ -n "${PR}" ]; then
+              notes="Bottles for PR #${PR}"
+            else
+              notes="Bottles for ${TAG}"
+            fi
             gh release create "${TAG}" \
               --repo "${GITHUB_REPOSITORY}" \
               --title "${TAG}" \
-              --notes "Bottles for PR #${PR}"
+              --notes "${notes}"
           fi
           # Rename brew test-bot's `lapdog--<ver>` to Homebrew's `lapdog-<ver>` URL form.
           mkdir -p /tmp/bottles-upload
