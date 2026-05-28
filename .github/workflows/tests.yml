@@ -160,6 +160,10 @@ jobs:
           tap_dir="$(brew --repository "${GITHUB_REPOSITORY}")"
           cd "${tap_dir}"
           json_files=$(find /tmp/bottle-artifacts -name '*.bottle.json' | tr '\n' ' ')
+          if [ -z "${json_files}" ]; then
+            echo "No bottle artifacts in this run (PR didn't touch Formula/); nothing to update."
+            exit 0
+          fi
           # shellcheck disable=SC2086
           brew bottle --merge --write --no-commit ${json_files}
           if git diff --quiet Formula/lapdog.rb; then
