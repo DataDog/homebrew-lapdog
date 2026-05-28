@@ -1,0 +1,16 @@
+# Policy for: publish-bottle job in .github/workflows/tests.yml
+# Trusted to mint a contents:write token for committing bottle do block
+# updates back to a same-repo PR branch. Added ahead of the workflow change
+# that uses it so the policy is registered on main before any PR references it.
+issuer: https://token.actions.githubusercontent.com
+
+subject: repo:DataDog/homebrew-lapdog:pull_request
+
+claim_pattern:
+  event_name: pull_request
+  job_workflow_ref: DataDog/homebrew-lapdog/\.github/workflows/tests\.yml@.+
+  repository: DataDog/homebrew-lapdog
+
+permissions:
+  actions: read
+  contents: write
