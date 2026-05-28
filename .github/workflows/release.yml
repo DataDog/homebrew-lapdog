@@ -9,12 +9,6 @@ name: publish bottle release
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      sha:
-        description: "SHA referenced by the formula's bottle do root_url (recovery use)"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -33,11 +27,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            sha="${{ inputs.sha }}"
-          else
-            sha="${{ github.sha }}"
-          fi
+          sha="${{ github.sha }}"
           # Inspect the commit's files directly rather than looking up the
           # associated PR. The /commits/{sha}/pulls reverse index can return
           # empty for seconds after a true merge commit lands, which caused

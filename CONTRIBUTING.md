@@ -105,25 +105,6 @@ workflows:
 No label or manual step is required. Non-formula PRs (docs, workflows, etc.)
 skip publishing.
 
-### Recovery if `release.yml` fails after merge
-
-If `release.yml` fails (network blip, expired artifacts, etc.), main is left
-with a formula referencing a release that doesn't exist or is missing assets.
-Users running `brew install` during this window fall back to source compile
-— slow but not broken.
-
-To recover, re-run `release.yml` manually with the SHA from main's `bottle do`
-`root_url`:
-
-```sh
-gh workflow run release.yml \
-  --repo DataDog/homebrew-lapdog \
-  -f sha=<sha-from-formula-bottle-do-root_url>
-```
-
-The workflow is idempotent — safe to re-run whether or not the release
-already exists.
-
 ## License and contributor agreement
 
 By contributing to this project, you agree that your contributions will be
