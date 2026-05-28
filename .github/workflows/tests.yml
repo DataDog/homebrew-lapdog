@@ -99,6 +99,9 @@ jobs:
     # bottle artifacts produced by the test-bot matrix above. Runs inline
     # (rather than via a separate workflow_run-triggered workflow) so the
     # commit lands as part of the same workflow whose checks gate merging.
+    # Steps gate on skip != 'true' (not a job-level if:) so this job still
+    # reports success as a required check on dd-octo-sts[bot] follow-up
+    # commits — same pattern as test-bot above.
     needs: [check-author, test-bot]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-22.04
