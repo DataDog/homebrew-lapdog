@@ -94,7 +94,7 @@ compilation cost on install. Publishing is fully automated across two
 workflows:
 
 1. **On PR** — `tests.yml` builds bottles for macOS arm64 and Linux x86_64
-   and uploads them as workflow artifacts. When it succeeds, `publish.yml`
+   and uploads them as workflow artifacts. Its `publish-bottle` job then
    updates the formula's `bottle do` block to reference the future release
    URL and commits the change to the PR branch (signed by `dd-octo-sts[bot]`
    via the Contents API). The release itself is not yet created.
@@ -103,7 +103,9 @@ workflows:
    the GitHub Release, and uploads the bottles.
 
 No label or manual step is required. Non-formula PRs (docs, workflows, etc.)
-skip publishing.
+skip publishing. PRs from forks skip the auto-bottle commit since the
+dd-octo-sts token can't push to a fork's branch — open formula PRs from a
+branch in this repo to get the auto-publish flow.
 
 ### Recovery if `release.yml` fails after merge
 
