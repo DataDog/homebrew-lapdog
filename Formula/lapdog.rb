@@ -9,16 +9,15 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.57.0.tar.gz"
-  sha256 "8be6e0e9f102824325ea908a00076a85d7d02690908f10033544d416d0a07c87"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.58.0.tar.gz"
+  sha256 "8c4f92141a60385df207aea495e3367d494a9fe24adc8c1e79ad18f16ce3a34d"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-b16f2a085cad3629662e8e7483a3c032d5460937"
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sonoma: "94a7feb0d563eebd23b4feaf9446a132aba5fa0611dd5b4d1f391725d412ab5a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "698816878dd77ff01d0e663e172e7da74cc194a31e894362b807ed7bce2d7fd1"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-fc5e89e313cb78977bdef5756a0e9a3840bbec61"
+    sha256 cellar: :any,                 arm64_sonoma: "4a1086f9b04c673bc545ab5e3dcba246fed8902568f7da27c838a2064fcdb407"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "4fd805e54132edcefa8ba0c3142790310d4e4c898259c30a263205465a56b3c1"
   end
 
   depends_on "expat"
@@ -26,8 +25,8 @@ class Lapdog < Formula
   depends_on "python@3.13"
 
   resource "aiohappyeyeballs" do
-    url "https://files.pythonhosted.org/packages/26/30/f84a107a9c4331c14b2b586036f40965c128aa4fee4dda5d3d51cb14ad54/aiohappyeyeballs-2.6.1.tar.gz"
-    sha256 "c3f9d0113123803ccadfdf3f0faa505bc78e6a72d1cc4806cbd719826e943558"
+    url "https://files.pythonhosted.org/packages/33/c6/61a2d7b7572279226bb2e7f61d7a19ca7c90da0329c93fa0d560cbf288d8/aiohappyeyeballs-2.6.2.tar.gz"
+    sha256 "e202810ee718bd01fc6ef49e8ea53d023d5cb6b581076d7925aa499fa55dbe64"
   end
 
   resource "aiohttp" do
@@ -46,8 +45,8 @@ class Lapdog < Formula
   end
 
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/25/ee/6caf7a40c36a1220410afe15a1cc64993a1f864871f698c0f93acb72842a/certifi-2026.4.22.tar.gz"
-    sha256 "8d455352a37b71bf76a79caa83a3d6c25afee4a385d632127b6afb3963f1c580"
+    url "https://files.pythonhosted.org/packages/f3/ce/ee2ecad540810a79593028e88299baeae54d346cc7a0d94b6199988b89b1/certifi-2026.5.20.tar.gz"
+    sha256 "69dea482ab64caa7b9f6aba1c6bf48bb6a5448d1c0f1b17ab42ad8c763a5344d"
   end
 
   resource "charset-normalizer" do
@@ -71,8 +70,8 @@ class Lapdog < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/82/77/7b3966d0b9d1d31a36ddf1746926a11dface89a83409bf1483f0237aa758/idna-3.15.tar.gz"
-    sha256 "ca962446ea538f7092a95e057da437618e886f4d349216d2b1e294abfdb65fdc"
+    url "https://files.pythonhosted.org/packages/b9/28/99c51f664567218d824af024c0251650fb27e4ca066df188dab0769c5b91/idna-3.17.tar.gz"
+    sha256 "5eb0cb53bc467c12eadcf6de83163ad8527cec9416f44b9b61b19caedad2b87f"
   end
 
   resource "Jinja2" do
@@ -141,8 +140,8 @@ class Lapdog < Formula
   end
 
   resource "yarl" do
-    url "https://files.pythonhosted.org/packages/23/6e/beb1beec874a72f23815c1434518bfc4ed2175065173fb138c3705f658d4/yarl-1.23.0.tar.gz"
-    sha256 "53b1ea6ca88ebd4420379c330aea57e258408dd0df9af0992e5de2078dc9f5d5"
+    url "https://files.pythonhosted.org/packages/79/12/1e8f37460ea0f7eb59c221fdaf0ed75e7ac43e97f8093b9c6f411df50a78/yarl-1.24.2.tar.gz"
+    sha256 "9ac374123c6fd7abf64d1fec93962b0bd4ee2c19751755a762a72dd96c0378f8"
   end
 
   def install
