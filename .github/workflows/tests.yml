@@ -45,7 +45,7 @@ jobs:
     env:
       # Keep Homebrew's trust store stable across test-bot's HOME override so
       # `brew doctor` sees the current tap trust written during setup.
-      HOMEBREW_USER_CONFIG_HOME: ${{ runner.temp }}/homebrew-user-config
+      HOMEBREW_USER_CONFIG_HOME: /tmp/homebrew-user-config-${{ github.run_id }}-${{ matrix.os }}
     # Step-level skip (not job-level) so the matrix still expands and reports
     # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
     # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
