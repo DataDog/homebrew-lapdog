@@ -43,9 +43,9 @@ jobs:
         os: [macos-14, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     env:
-      # Homebrew 5.1 emits a transitional tap-trust warning that makes
-      # `brew doctor` fail for third-party taps during test-bot setup.
-      HOMEBREW_NO_REQUIRE_TAP_TRUST: "1"
+      # Keep Homebrew's trust store stable across test-bot's HOME override so
+      # `brew doctor` sees the tap trust written by test-bot setup.
+      XDG_CONFIG_HOME: /tmp/homebrew-xdg-config-${{ github.run_id }}-${{ matrix.os }}
     # Step-level skip (not job-level) so the matrix still expands and reports
     # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
     # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
