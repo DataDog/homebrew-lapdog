@@ -42,12 +42,6 @@ jobs:
       matrix:
         os: [macos-14, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
-    env:
-      # test-bot trusts this tap before running `brew doctor`, but recent
-      # Homebrew versions can still report the tap as untrusted after
-      # test-bot switches HOME for local CI runs. Suppress the transitional
-      # tap-trust warning so doctor failures stay scoped to actionable issues.
-      HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
     # Step-level skip (not job-level) so the matrix still expands and reports
     # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
     # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
