@@ -9,15 +9,15 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.59.0.tar.gz"
-  sha256 "96d4947cf8b7f2db9cedc5e6ad08ab6015804c4401f72982a2d081d4f44629a7"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.59.1.tar.gz"
+  sha256 "e012f905116b793c286615de468961f50a73a169ce7b6583228e1e7c6ec5003b"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-a55ff86d171242d0a7afa8bd4002192536bfbc81"
-    sha256 cellar: :any, arm64_sonoma: "8f04631b590bfee45ad2dafefdaac5fc80bbc30ae8931b596cc8c261d1b81225"
-    sha256 cellar: :any, x86_64_linux: "6ee22e1c3e24bd0e7e5516df0d0382417d193ab2571baa32f323b48ad7aad779"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-b8ce5748685f92c02d12f750a09dbe085cbbb08d"
+    sha256 cellar: :any, arm64_sonoma: "e5197ec1cf9e9cf01723e79dd9daa72b4a1ccf69b1b61a6730884aa89bc49b7b"
+    sha256 cellar: :any, x86_64_linux: "d13349d6804cb26652536c5712ff0c49e9b9f1f01819e0d866e2994691110575"
   end
 
   depends_on "expat"
@@ -70,8 +70,8 @@ class Lapdog < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/b9/28/99c51f664567218d824af024c0251650fb27e4ca066df188dab0769c5b91/idna-3.17.tar.gz"
-    sha256 "5eb0cb53bc467c12eadcf6de83163ad8527cec9416f44b9b61b19caedad2b87f"
+    url "https://files.pythonhosted.org/packages/cd/63/9496c57188a2ee585e0f1db071d75089a11e98aa86eb99d9d7618fc1edce/idna-3.18.tar.gz"
+    sha256 "ffb385a7e039654cef1ab9ef32c6fafe283c0c0467bba1d9029738ce4a14a848"
   end
 
   resource "Jinja2" do
