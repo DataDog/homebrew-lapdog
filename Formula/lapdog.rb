@@ -9,8 +9,8 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.59.0.tar.gz"
-  sha256 "96d4947cf8b7f2db9cedc5e6ad08ab6015804c4401f72982a2d081d4f44629a7"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.59.1.tar.gz"
+  sha256 "e012f905116b793c286615de468961f50a73a169ce7b6583228e1e7c6ec5003b"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
@@ -70,8 +70,8 @@ class Lapdog < Formula
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/b9/28/99c51f664567218d824af024c0251650fb27e4ca066df188dab0769c5b91/idna-3.17.tar.gz"
-    sha256 "5eb0cb53bc467c12eadcf6de83163ad8527cec9416f44b9b61b19caedad2b87f"
+    url "https://files.pythonhosted.org/packages/cd/63/9496c57188a2ee585e0f1db071d75089a11e98aa86eb99d9d7618fc1edce/idna-3.18.tar.gz"
+    sha256 "ffb385a7e039654cef1ab9ef32c6fafe283c0c0467bba1d9029738ce4a14a848"
   end
 
   resource "Jinja2" do
