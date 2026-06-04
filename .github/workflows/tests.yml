@@ -57,6 +57,10 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
+      - name: Trust tap
+        if: needs.check-author.outputs.skip != 'true'
+        run: brew trust datadog/lapdog
+
       - name: Cache Homebrew Bundler RubyGems
         if: needs.check-author.outputs.skip != 'true'
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
