@@ -139,6 +139,10 @@ jobs:
         if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
         uses: Homebrew/actions/setup-homebrew@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
 
+      - name: Trust tap
+        if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
+        run: brew trust datadog/lapdog
+
       - name: Set up git
         if: needs.check-author.outputs.skip != 'true' && github.event.pull_request.head.repo.full_name == github.repository
         uses: Homebrew/actions/git-user-config@cf31444e770b9919bb21e695d66f56c39cfd3dee # master
