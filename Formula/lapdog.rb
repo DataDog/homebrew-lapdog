@@ -11,7 +11,6 @@ class Lapdog < Formula
   homepage "https://github.com/DataDog/dd-apm-test-agent"
   url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.61.0.tar.gz"
   sha256 "8838e11eae3c13afdbe086ff2f646caec5df6036781524d3cf80023443fd62af"
-  version "1.61.0"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
