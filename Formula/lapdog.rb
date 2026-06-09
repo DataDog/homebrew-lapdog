@@ -15,9 +15,9 @@ class Lapdog < Formula
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-b8ce5748685f92c02d12f750a09dbe085cbbb08d"
-    sha256 cellar: :any, arm64_sonoma: "e5197ec1cf9e9cf01723e79dd9daa72b4a1ccf69b1b61a6730884aa89bc49b7b"
-    sha256 cellar: :any, x86_64_linux: "d13349d6804cb26652536c5712ff0c49e9b9f1f01819e0d866e2994691110575"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-19dd915b68c0ffc7c1071730b760825002e482bf"
+    sha256 cellar: :any, arm64_sonoma: "bd188ee29625dce4b5505f77aae467df5725d343413e7bae4c52386e2c26e6fa"
+    sha256 cellar: :any, x86_64_linux: "3d10d9247cb08187513c993f4df92ff6b849567e4bb9db56f6cc9f83111ab907"
   end
 
   depends_on "expat"
