@@ -40,8 +40,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, ubuntu-22.04]
-    runs-on: ${{ matrix.os }}
+        include:
+          - os: macos-14
+            runner: macos-14
+          # Keep the existing status check name for branch protection, but run
+          # on Ubuntu 24.04 so Homebrew's doctor check sees glibc >= 2.39.
+          - os: ubuntu-22.04
+            runner: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     # Step-level skip (not job-level) so the matrix still expands and reports
     # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
     # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
@@ -66,11 +72,11 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ matrix.os }}-rubygems-
+          key: ${{ matrix.runner }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ matrix.runner }}-rubygems-
 
       - name: Install Linux sandbox dependency
-        if: needs.check-author.outputs.skip != 'true' && matrix.os == 'ubuntu-22.04'
+        if: needs.check-author.outputs.skip != 'true' && startsWith(matrix.runner, 'ubuntu-')
         run: sudo apt-get update && sudo apt-get install --yes bubblewrap
 
       - if: needs.check-author.outputs.skip != 'true'
