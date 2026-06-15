@@ -43,13 +43,11 @@ jobs:
         include:
           - os: macos-14
             runner: macos-14
-          # Keep the existing status check name for branch protection, but run
-          # on Ubuntu 24.04 so Homebrew's doctor check sees glibc >= 2.39.
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             runner: ubuntu-24.04
     runs-on: ${{ matrix.runner }}
     # Step-level skip (not job-level) so the matrix still expands and reports
-    # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-22.04)` check runs
+    # `brew test-bot (macos-14)` / `brew test-bot (ubuntu-24.04)` check runs
     # on dd-octo-sts[bot] follow-up commits. Required-status-checks need those
     # exact names; a job-level skip collapses them into a single unexpanded
     # check named `brew test-bot (${{ matrix.os }})`.
