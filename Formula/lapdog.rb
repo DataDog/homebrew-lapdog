@@ -149,7 +149,7 @@ class Lapdog < Formula
     # git tags. The GitHub source tarball doesn't include .git, so we have
     # to set the version explicitly.
     ENV["SETUPTOOLS_SCM_PRETEND_VERSION_FOR_DDAPM_TEST_AGENT"] = version.to_s
-    ENV["DYLD_LIBRARY_PATH"] = Formula["expat"].opt_lib.to_s
+    ENV["DYLD_LIBRARY_PATH"] = formula_opt_lib("expat").to_s
 
     virtualenv_install_with_resources
   end
