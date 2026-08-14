@@ -9,8 +9,8 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.64.0.tar.gz"
-  sha256 "aa0425fc66fe0249f0e4d7375612a50d8c427b9ce3ba89cb0abd0e93658f36e4"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.65.0.tar.gz"
+  sha256 "3ad3fbad315de0fab3f88ca8452bf07794574ef9a99a4d701eec0ba30cf8c6d5"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
@@ -50,8 +50,8 @@ class Lapdog < Formula
   end
 
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/bd/2a/23f34ec9d04624958e137efdc394888716353190e75f25dd22c7a2c7a8aa/charset_normalizer-3.4.9.tar.gz"
-    sha256 "673611bbd43f0810bec0b0f028ddeaaa501190339cac411f347ac76917c3ae7b"
+    url "https://files.pythonhosted.org/packages/cb/31/4971872b3ed8715346231fb6eb4da8fcba65a4143c189db151ee28a2812b/charset_normalizer-3.5.0.tar.gz"
+    sha256 "49bd5feb59b0bf3cbf6ebcf4352e371c95b9da9bacd4449f8b64d0ad2c10a26e"
   end
 
   resource "ddsketch" do
