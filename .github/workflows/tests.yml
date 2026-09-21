@@ -91,7 +91,7 @@ jobs:
 
       - name: Build bottle
         if: needs.check-author.outputs.skip != 'true' && github.event_name == 'pull_request'
-        run: brew test-bot --only-formulae --skip-recursive-dependents --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}"
+        run: brew test-bot --only-formulae --root-url="https://github.com/${{ github.repository }}/releases/download/lapdog-${{ github.event.pull_request.head.sha }}"
 
       - name: Upload bottle
         if: always() && needs.check-author.outputs.skip != 'true' && github.event_name == 'pull_request'
