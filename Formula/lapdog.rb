@@ -9,14 +9,14 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.69.0.tar.gz"
-  sha256 "9382d20a5b82ee0ae49694c2f0854682118b8544c8bbfec93344c42021102373"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.69.1.tar.gz"
+  sha256 "dacf7441f27ed5adda6e19443b8b3d39321e9de2573ad505998a77d33ac4e6c6"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-f52b51789e66ec1689cde8b30bae3f9530dbd7e5"
-    sha256 cellar: :any, x86_64_linux: "246d90d35cd02ca8088f62d1268b2fa3d7f2aae5ad661f26bdb7b164b5537ed3"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-28b0370c4a9495ff39d7df6bb3bfe3b721c3e618"
+    sha256 cellar: :any, x86_64_linux: "38d662732484cf0410d9fdccce986a71d0842e747302f79407f4522b26db9b85"
   end
 
   depends_on "expat"
@@ -29,8 +29,8 @@ class Lapdog < Formula
   end
 
   resource "aiohttp" do
-    url "https://files.pythonhosted.org/packages/93/2f/6a91adaa2dc26877d6ed2f54c0370c8910f019db7d77c5c6a194611e93ea/aiohttp-3.14.4.tar.gz"
-    sha256 "831fc5bd39ec2517851e348f613ddb5447a47cf4b71cb09845af7ad7ed45d8f9"
+    url "https://files.pythonhosted.org/packages/6c/4c/bdccd81e9ee225b69c60e7766c9a5b05364f118f4d383713b89a682d772d/aiohttp-3.14.5.tar.gz"
+    sha256 "5558a7f5a05af9ecf744af91e5baefc436f93c9333e656c27ec253f9a6bbe178"
   end
 
   resource "aiosignal" do
@@ -44,8 +44,8 @@ class Lapdog < Formula
   end
 
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/a3/c2/24167ea9858356b47a87a50d39908bfdb72ceeefe0041586e704e5376b3a/certifi-2026.7.22.tar.gz"
-    sha256 "741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55"
+    url "https://files.pythonhosted.org/packages/fd/11/b524cbd9bbdaca58608e4cf4053fd463417549e1959fa8d3aa18319f9555/certifi-2026.10.23.tar.gz"
+    sha256 "a9895e6e2758b371e0545e321a3a8fd1fcfd9829ada8824a936dfb16aaaf36cd"
   end
 
   resource "charset-normalizer" do
@@ -64,8 +64,8 @@ class Lapdog < Formula
   end
 
   resource "grpcio" do
-    url "https://files.pythonhosted.org/packages/3f/4f/4435c0aae54657258d9cfcba78598f3d9e5fe4c82ff18d78558567b90faf/grpcio-1.84.0.tar.gz"
-    sha256 "19aaf172fc2edbefccce3f6e92c5150975dbe56c45744e9e87cf72ebdf85bfbe"
+    url "https://files.pythonhosted.org/packages/5b/34/60907c03ef43039c1e91ed5bdfae41ada5648264f013cabc3f186600e571/grpcio-1.85.0.tar.gz"
+    sha256 "8aa2647afcbe5a87783e9626a2ece6277db33c6604c21690d19b5bd15609e36d"
   end
 
   resource "idna" do
@@ -84,13 +84,13 @@ class Lapdog < Formula
   end
 
   resource "msgpack" do
-    url "https://files.pythonhosted.org/packages/0a/e7/bb605a7bab2d8425a64b3fa762b39dc1bf1c7e3f11ba6fb5413d6db0ff8c/msgpack-1.2.3.tar.gz"
-    sha256 "32edb81a2b5eb7cd7c9d941b2bfbbb082fd2cd09e0e725930316af6b708db186"
+    url "https://files.pythonhosted.org/packages/cc/52/1ec7ead2c7528bf3d1db73e886fa4df10f9e6f0eb7854a448b7090cfcef7/msgpack-1.2.4.tar.gz"
+    sha256 "475c44e12f2a5de766a8448783f149c9b33f3f49b88953c6cd739a77d93c732c"
   end
 
   resource "multidict" do
-    url "https://files.pythonhosted.org/packages/d6/99/1d4d69c3512d0ddbfa3a1b69cfd9a151012ab2eb4eabbb096201b1f0b7d8/multidict-6.9.1.tar.gz"
-    sha256 "0f06e60fa190aa7abd0914c2a766736fdc8e9f34878c4346338534b73d1b20e2"
+    url "https://files.pythonhosted.org/packages/7b/6b/29ef8e752f5854dcc267ded0652c475bec99b86f255957a0d4fcad657b18/multidict-7.2.1.tar.gz"
+    sha256 "e8af3e6f1bdbc31fd762b094133b478b89988eaebc63cbe82b1d9e3bbd15cede"
   end
 
   resource "opentelemetry-proto" do
@@ -119,8 +119,8 @@ class Lapdog < Formula
   end
 
   resource "requests-aws4auth" do
-    url "https://files.pythonhosted.org/packages/d1/fd/796afb1c08e6332da9200bc530bcd869a17cecf93c4d9355d9af8c263eea/requests_aws4auth-1.3.2.tar.gz"
-    sha256 "7a697bf3c7a66d82980ad3348a2539403870d5c1f1e313f5676fb11e6793eef8"
+    url "https://files.pythonhosted.org/packages/ef/9a/d01a0246c2f5b48095a834077898ad141cb79374fe385bdffb11480e514c/requests_aws4auth-1.4.0.tar.gz"
+    sha256 "db8bbce4344e83e735bb7efd840740b57bee4d4036eb58933efabc19947e8cbb"
   end
 
   resource "six" do
