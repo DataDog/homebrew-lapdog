@@ -9,15 +9,15 @@ class Lapdog < Formula
 
   desc "Local LLM Observability dev tool — wraps dd-apm-test-agent"
   homepage "https://github.com/DataDog/dd-apm-test-agent"
-  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.70.0.tar.gz"
-  sha256 "ebf238f074a622f3fbe4d71f57e482e8391bae864f2ba41438b229397ea1839c"
+  url "https://github.com/DataDog/dd-apm-test-agent/archive/refs/tags/v1.71.0.tar.gz"
+  sha256 "c8bd180e72cf9a334ed3ac3d48e93171c5c681265e2e6a7dc8f8026c60dfe773"
   license "BSD-3-Clause"
   head "https://github.com/DataDog/dd-apm-test-agent.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-cdad336af3b10edc0ad4b9a00ed50350ca3d3e37"
-    sha256 cellar: :any, arm64_sequoia: "d1ca6498ac30bdd5e185b9cf8c3a4bdfdcb5282fc1d5ba09764eaa50477cea98"
-    sha256 cellar: :any, x86_64_linux:  "fab6930461e1a44b464603a4189656efebbf26dcc0143fe848e84efda67a18e8"
+    root_url "https://github.com/DataDog/homebrew-lapdog/releases/download/lapdog-215d5b1476d83cada2d9e829c28440e78850d947"
+    sha256 cellar: :any, arm64_sequoia: "c98547f90e089544048dd9de2a507eccdd8d34f07e0b108dc220fd5f64ef9774"
+    sha256 cellar: :any, x86_64_linux:  "76bc47387841f50fa737d824ac01b78f4d13d4d9419a25f8475e7ff754bc1918"
   end
 
   depends_on "expat"
